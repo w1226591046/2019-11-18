@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/1.css">
+</head>
+<body>
+    <section class="box">
+        <nav>
+            <span class="xu">排序</span>
+            <a href="javascript:void(0);" data-name="time">
+                <i class="up"></i>
+                <i class="down"></i>
+                上架时间
+            </a>
+            <a href="javascript:void(0);" data-name="hot">
+                <i class="up"></i>
+                <i class="down"></i>
+                热度
+            </a>
+            <a href="javascript:void(0);" data-name="price">
+                <i class="up "></i>
+                <i class="down"></i>
+                价钱
+            </a>
+           
+        </nav>
+        <ul class="list" id="ul">
+            
+        </ul>
+       
+   </section>
+   <script src="../商品排序布局/tools.js"></script>
+   <script>
+     fetch('./json/product.json')
+    .then(d=>d.json())
+    .then(data=>{
+        function Zd(){
+            this.newdata = data.concat();
+            this.as = document.querySelectorAll('a');
+        }
+        Zd.prototype.xuan = function(){
+            let list = this.newdata.map(({img,title,time,hot,price},i)=>{
+               return  `
+                <li>
+                <img data-src="${img}" alt="">
+                <p  title = "${title}">商品名称:<span>${title.substr(0,6)}</span></p>
+                <p>上架时间:<span>${time}</span></p>
+                <p>商品热度:<span>${hot}</span></p>
+                <p>商品价格::<span>${price}</span></p>
+            </li> 
+                `
+            }).join('');
+            ul.innerHTML = list;
+        }
+        //从小到大排序
+        Zd.prototype.ss = function(ths){
+            this.newdata.sort((a,b)=>{
+                if(ths.dataset.name === 'time'){
+                return new Date(a.time) - new Date(b.time)
+                }
+                return a[ths.dataset.name] - b[ths.dataset.name]
+            })
+                ths.children[1].classList.remove('ab');
+                ths.children[0].classList.add('at');
+                this.xuan()
+        }
+        // 从大到小排序
+        Zd.prototype.se = function(ths){
+            this.newdata.sort((a,b)=>{
+                if(ths.dataset.name === 'time'){
+                return new Date(b.time) - new Date(a.time)
+                }
+                return b[ths.dataset.name] - a[ths.dataset.name]
+            })
+                ths.children[0].classList.remove('at');
+                ths.children[1].classList.add('ab');
+                this.xuan()
+        }
+        // 添加点击事件
+        Zd.prototype.bind = function(){
+            let that = this;
+            this.as.forEach((ele)=>{
+                ele.off = true;
+                ele.onclick = function(){
+                    if(this.off){
+                        that.ss(this)
+                    }else{
+                        that.se(this)
+                    }
+                    this.off = !this.off
+                }
+            })
+        }
+        Zd.prototype.Yc = function(){
+            this.li = document.querySelectorAll('.list li');
+            this.Ih = window.innerHeight; // 可视区高度
+            // this.pY = window.pageYOffset;//滚动条距离
+            this.t1 = new Tools; 
+            let _this = this;
+            window.onscroll = fn ;
+            fn();
+            function fn(){
+                 let sum = 100;
+                _this.li.forEach((ele,i)=>{
+                    let {t} = _this.t1.position(ele);//每张图片的绝对位置
+                    console.log(t)
+                    if(window.innerHeight + window.pageYOffset >= t && !ele.children[0].src){
+                        ele.children[0].src = ele.children[0].dataset.src;
+                        setTimeout(()=>{
+                            ele.children[0].style.opacity = 1;
+                        },sum*i);
+                    }
+                });
+            };
+        };
+     
+            let zed = new Zd;
+                zed.xuan()
+                zed.bind()   
+                zed.Yc();
+                });
+           
+   
+   </script>
+</body>
+</html>
